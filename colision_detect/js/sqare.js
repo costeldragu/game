@@ -29,6 +29,10 @@
                 this.startUpPosition(options.board)
             }
 
+            this.doomElement.css({
+                backgroundColor:'rgb('+Math.floor((Math.random() * 255) + 1)+','+Math.floor((Math.random() * 255) + 1)+','+Math.floor((Math.random() * 255) + 1)+')'
+            })
+
             this.render();
 
 
@@ -37,10 +41,10 @@
          * Start up position of rect
          */
         startUpPosition: function() {
-            this.rect.width = Math.floor((Math.random() * 50) + 1);
-            this.rect.height = Math.floor((Math.random() * 50) + 1);
-            this.rect.top = Math.floor((Math.random() * (this.doomBoard.height-this.rect.height)) + 1);
-            this.rect.left = Math.floor((Math.random() * (this.doomBoard.width-this.rect.width)) + 1);
+            this.rect.width = Math.floor((Math.random() * 50) + 10);
+            this.rect.height = Math.floor((Math.random() * 50) + 10);
+            this.rect.top = Math.floor((Math.random() * (this.doomBoard.height-this.rect.height)) + 5);
+            this.rect.left = Math.floor((Math.random() * (this.doomBoard.width-this.rect.width)) + 5);
         },
         render: function () {
             this.doomElement.css({
