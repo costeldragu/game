@@ -2,5 +2,11 @@
     margin: auto;
     width: 800px;
     height: 600px;
-    background-color: aliceblue
+    background-color: aliceblue;
+    position:relative;
+}
+
+.square {
+    border: 1px solid #000;
+    position: absolute;
 }
