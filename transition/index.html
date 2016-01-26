@@ -11,6 +11,7 @@
           integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <!-- Latest compiled and minified JavaScript -->
     <link rel="stylesheet" href="../common/common.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-1.3.0.min.js"></script>
     <script src="https://maxcdn.bootsktrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
@@ -25,8 +26,12 @@
     <div class="row">
         <div class="col-md-12">
             <div class="game_board" id="game_board">
-                <div class="move"></div>
+                <div class="square move"></div>
+                <div class="square over position"></div>
+
             </div>
+            <input class="btn btn-default" id="goto_over" type="button" value="Go to over">
+            <input class="btn btn-default" id="reposition" type="button" value="Reposition">
         </div>
     </div>
 
