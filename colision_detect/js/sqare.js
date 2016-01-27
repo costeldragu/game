@@ -1,3 +1,5 @@
+
+
 (function ($, window, document) {
     "use strict";
     var square = {
@@ -7,13 +9,25 @@
         rect: {
             top: 0,
             left: 0,
-            height: 0,
-            width: 0
+            right: 0,
+            bottom: 0
         },
-        doomBoard : {},
+        dimensions: {
+            width: 0,
+            height: 0
+        },
+        /**
+         * Movement direction
+         */
+        directions: {
+            x: 1,
+            y: 1
+        },
+        speed: 2,
+        doomBoard: {},
         doomElement: false,
         //Init the element
-        init: function (options) {
+        init: function init(options) {
             //Init doom element
             this.doomElement = $('<div>', {
                 'class': 'square'
@@ -21,6 +35,10 @@
             //Set the rect if any
             if (options.rect) {
                 this.rect = options.rect;
+            }
+            //Set the rect if any
+            if (options.dimensions) {
+                this.rect = options.dimensions;
             }
             //set sqare to board if board exits
             if (options.board) {
@@ -30,8 +48,8 @@
             }
 
             this.doomElement.css({
-                backgroundColor:'rgb('+Math.floor((Math.random() * 255) + 1)+','+Math.floor((Math.random() * 255) + 1)+','+Math.floor((Math.random() * 255) + 1)+')'
-            })
+                backgroundColor: 'rgb(' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ')'
+            });
 
             this.render();
 
@@ -40,44 +58,100 @@
         /**
          * Start up position of rect
          */
-        startUpPosition: function() {
-            this.rect.width = Math.floor((Math.random() * 50) + 10);
-            this.rect.height = Math.floor((Math.random() * 50) + 10);
-            this.rect.top = Math.floor((Math.random() * (this.doomBoard.height-this.rect.height)) + 5);
-            this.rect.left = Math.floor((Math.random() * (this.doomBoard.width-this.rect.width)) + 5);
+        startUpPosition: function startUpPosition() {
+            this.dimensions.width = Math.floor((Math.random() * 50) + 10);
+            this.dimensions.height = Math.floor((Math.random() * 50) + 10);
+            this.rect.top = Math.floor((Math.random() * (this.doomBoard.height - this.dimensions.height)) + 5);
+            this.rect.left = Math.floor((Math.random() * (this.doomBoard.width - this.dimensions.width)) + 5);
         },
-        render: function () {
+        /**
+         * Render the element
+         */
+        render: function render() {
             this.doomElement.css({
                 top: this.rect.top,
                 left: this.rect.left,
-                height: this.rect.height,
-                width: this.rect.width
+                height: this.dimensions.height,
+                width: this.dimensions.width
             })
+
+        },
+        overlap: function overlap(container) {
+            if (container === null) {
+                return this;
+            }
+            return !(
+                this.rect.top > container.rect.bottom ||
+                this.rect.right < container.rect.left ||
+                this.rect.bottom < container.rect.top ||
+                this.rect.left > container.rect.right
+            );
+        },
+        move: function move() {
+            var container = this.doomBoard;
+            var rect = this.rect;
+            var dimensions = this.dimensions;
+
+            /**
+             * Set x direction
+             */
+            if (rect.left > (container.width - dimensions.width)) {
+                this.directions.x = -1;
+            }
+            if (rect.left < 0) {
+                this.directions.x = 1;
+            }
+
+            /**
+             * Set y direction
+             */
+            if (rect.top > (container.height - dimensions.height)) {
+                this.directions.y = -1;
+            }
+            if (rect.top < 0) {
+                this.directions.y = 1;
+            }
+
+            //Calculate new position
+            rect.top += this.speed * this.directions.y;
+            rect.left +=  this.speed * this.directions.x ;
+            //Recalculate the rect
+            this.rect = {
+                top: rect.top,
+                left: rect.left,
+                right: rect.left + dimensions.width,
+                bottom: rect.top + dimensions.height
+            };
+
+            this.render();
+            return this;
+
         }
+
 
     };
     //Init the 
     $(function () {
         //Init square array list
-        var squares = [];
+        window.squares = [];
         var gameWidth = $('#game_board').outerWidth();
         var gameHeight = $('#game_board').outerHeight();
-        for(var x=0;x<10;++x) {
-            var oneSquare = Object.create(square);
+
+
+        for (var x = 0; x < 10; ++x) {
+            var oneSquare = $.extend(true,{}, square);
             oneSquare.init({
                 board: {
-                    dom:$('#game_board'),
-                    width:gameWidth,
-                    height:gameHeight
+                    dom: $('#game_board'),
+                    width: gameWidth,
+                    height: gameHeight
                 }
             });
             squares.push(oneSquare);
-
         }
 
         gameLoop();
     });
-
 
 
     /**
@@ -85,7 +159,9 @@
      */
     function gameLoop() {
 
-
+        $.each( window.squares,function(index,square){
+            square.move();
+        });
         fps();
         window.requestAnimationFrame(gameLoop)
     }
