@@ -1,5 +1,3 @@
-
-
 (function ($, window, document) {
     "use strict";
     var square = {
@@ -12,6 +10,7 @@
             right: 0,
             bottom: 0
         },
+        id:0,
         dimensions: {
             width: 0,
             height: 0
@@ -50,7 +49,7 @@
             this.doomElement.css({
                 backgroundColor: 'rgb(' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ')'
             });
-
+            this.doomElement.html(this.id);
             this.render();
 
 
@@ -76,17 +75,32 @@
             })
 
         },
+        /**
+         * check if overlap occurs
+         * @param container -
+         * @returns {*}
+         */
         overlap: function overlap(container) {
             if (container === null) {
                 return this;
             }
-            return !(
+            var isOverlap = !(
                 this.rect.top > container.rect.bottom ||
                 this.rect.right < container.rect.left ||
                 this.rect.bottom < container.rect.top ||
                 this.rect.left > container.rect.right
             );
+
+            console.log(isOverlap);
+            if (isOverlap) {
+                container.changeDirection(this);
+                this.changeDirection(container);
+            }
         },
+        /**
+         *
+         * @returns {square}
+         */
         move: function move() {
             var container = this.doomBoard;
             var rect = this.rect;
@@ -114,7 +128,7 @@
 
             //Calculate new position
             rect.top += this.speed * this.directions.y;
-            rect.left +=  this.speed * this.directions.x ;
+            rect.left += this.speed * this.directions.x;
             //Recalculate the rect
             this.rect = {
                 top: rect.top,
@@ -126,6 +140,32 @@
             this.render();
             return this;
 
+        },
+        /**
+         * If overlap obscures , change direction
+         * @param container
+         * @returns {square}
+         */
+        changeDirection: function changeDirection(container) {
+            if (container === null) {
+                return this;
+            }
+
+            if (!(this.rect.top > container.rect.bottom)) {
+                this.directions.y = -1;
+            }
+            if (!(this.rect.right > container.rect.left)) {
+                this.directions.x = 1;
+            }
+
+            if (!(this.rect.bottom < container.rect.top)) {
+                this.directions.y = 1;
+            }
+            if (!(this.rect.left > container.rect.right)) {
+                this.directions.x = -1;
+            }
+            this.move();
+            return this;
         }
 
 
@@ -137,9 +177,9 @@
         var gameWidth = $('#game_board').outerWidth();
         var gameHeight = $('#game_board').outerHeight();
 
-
         for (var x = 0; x < 10; ++x) {
-            var oneSquare = $.extend(true,{}, square);
+            var oneSquare = $.extend(true, {}, square);
+            oneSquare.id = x;
             oneSquare.init({
                 board: {
                     dom: $('#game_board'),
@@ -151,6 +191,7 @@
         }
 
         gameLoop();
+        $('#move').on('mousedown',gameLoop);
     });
 
 
@@ -159,11 +200,17 @@
      */
     function gameLoop() {
 
-        $.each( window.squares,function(index,square){
+        $.each(window.squares, function (index, square) {
+            $.each(window.squares, function (other_index, other_square) {
+                if(other_square.id != square.id) {
+                    square.overlap(other_square);
+                }
+            });
             square.move();
+
         });
         fps();
-        window.requestAnimationFrame(gameLoop)
+     //  window.requestAnimationFrame(gameLoop)
     }
 
     /**
