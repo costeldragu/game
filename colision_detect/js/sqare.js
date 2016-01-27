@@ -27,25 +27,29 @@
         doomElement: false,
         //Init the element
         init: function init(options) {
+            //Ensure that option is an object
+            options = options || {};
             //Init doom element
-            this.doomElement = $('<div>', {
-                'class': 'square'
-            });
+            if(!this.doomElement) {
+                this.doomElement = $('<div>', {
+                    'class': 'square'
+                });
+            }
             //Set the rect if any
             if (options.rect) {
                 this.rect = options.rect;
             }
             //Set the rect if any
             if (options.dimensions) {
-                this.rect = options.dimensions;
+                this.dimensions = options.dimensions;
             }
-            //set sqare to board if board exits
+            //set square to board if board exits
             if (options.board) {
                 options.board.dom.append(this.doomElement);
                 this.doomBoard = options.board;
-                this.startUpPosition(options.board)
             }
 
+            this.startUpPosition();
             this.dimensions.x =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
             this.dimensions.y =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
 
@@ -61,10 +65,13 @@
          * Start up position of rect
          */
         startUpPosition: function startUpPosition() {
-            this.dimensions.width = Math.floor((Math.random() * 50) + 10);
-            this.dimensions.height = Math.floor((Math.random() * 50) + 10);
+            if(!this.doomBoard) return;
+            this.dimensions.width = 200;Math.floor((Math.random() * 50) + 10);
+            this.dimensions.height = 200; Math.floor((Math.random() * 50) + 10);
             this.rect.top = Math.floor((Math.random() * (this.doomBoard.height - this.dimensions.height)) + 5);
             this.rect.left = Math.floor((Math.random() * (this.doomBoard.width - this.dimensions.width)) + 5);
+            this.rect.right = this.rect.left + this.dimensions.width;
+            this.rect.bottom = this.rect.top + this.dimensions.height
         },
         /**
          * Render the element
@@ -87,18 +94,16 @@
             if (container === null) {
                 return this;
             }
-            var isOverlap = !(
+            return !(
                 this.rect.top > container.rect.bottom ||
                 this.rect.right < container.rect.left ||
                 this.rect.bottom < container.rect.top ||
                 this.rect.left > container.rect.right
             );
 
-            console.log(isOverlap);
-            if (isOverlap) {
-                container.changeDirection(this);
-                this.changeDirection(container);
-            }
+
+
+
         },
         /**
          *
@@ -110,7 +115,7 @@
             var dimensions = this.dimensions;
 
             /**
-             * Set x direction
+             * Set x direction base on the container
              */
             if (rect.left > (container.width - dimensions.width)) {
                 this.directions.x = -1;
@@ -120,7 +125,7 @@
             }
 
             /**
-             * Set y direction
+             * Set y direction  base on the container
              */
             if (rect.top > (container.height - dimensions.height)) {
                 this.directions.y = -1;
@@ -145,7 +150,7 @@
 
         },
         /**
-         * If overlap obscures , change direction
+         * If overlap occurs , change direction
          * @param container
          * @returns {square}
          */
@@ -154,17 +159,47 @@
                 return this;
             }
 
+            var colision_found = false;
+
+
             if (!(this.rect.top > container.rect.bottom)) {
-                this.directions.y = -1;
-            }else if (!(container.rect.top > this.rect.bottom)) {
+                console.log('top bottom',this.id,container.id);
                 this.directions.y = 1;
+                container.directions.y = -1;
+
             }
 
-            if (!(this.rect.right > container.rect.left)) {
+
+
+            if (!(this.rect.left > container.rect.right)) {
+                console.log('left to right');
                 this.directions.x = 1;
-            }else if (!(container.rect.right > this.rect.left)) {
-                this.directions.x = -1;
+                container.directions.x = -1;
+
+
             }
+            console.log('move');
+            this.move();
+            container.move();
+            //if (!(this.rect.right < container.rect.left) && !colision_found) {
+            //    this.directions.x = -1;
+            //    container.directions.x = 1;
+            //    this.move();
+            //    container.move();
+            //    colision_found = true;
+            //}
+
+            //if (!(this.rect.top > container.rect.bottom)) {
+            //    this.directions.y = -1;
+            //}else if (!(container.rect.top > this.rect.bottom)) {
+            //    this.directions.y = 1;
+            //}
+            //
+            //if (!(this.rect.right > container.rect.left)) {
+            //    this.directions.x = 1;
+            //}else if (!(container.rect.right > this.rect.left)) {
+            //    this.directions.x = -1;
+            //}
 
             //if (!(this.rect.right > container.rect.left)) {
             //    this.directions.x = 1;
@@ -176,7 +211,7 @@
             //if (!(this.rect.left > container.rect.right)) {
             //    this.directions.x = -1;
             //}
-            this.move();
+            //this.move();
             return this;
         }
 
@@ -189,7 +224,7 @@
         var gameWidth = $('#game_board').outerWidth();
         var gameHeight = $('#game_board').outerHeight();
 
-        for (var x = 0; x <10; ++x) {
+        for (var x = 0; x <2; ++x) {
             var oneSquare = $.extend(true, {}, square);
             oneSquare.id = x;
             oneSquare.init({
@@ -199,6 +234,10 @@
                     height: gameHeight
                 }
             });
+
+            //Avoid startup overlap
+            window.checkOverlap = 0;
+            avoidOverLap(oneSquare);
             squares.push(oneSquare);
         }
 
@@ -214,8 +253,9 @@
 
         $.each(window.squares, function (index, square) {
             $.each(window.squares, function (other_index, other_square) {
-                if(other_square.id != square.id) {
-                    square.overlap(other_square);
+                if(other_square.id != square.id && square.overlap(other_square)){
+                    other_square.changeDirection(square);
+
                 }
             });
             square.move();
@@ -223,6 +263,24 @@
         });
         fps();
        window.requestAnimationFrame(gameLoop)
+    }
+
+    /**
+     * Try to avoid overlap on the initialization
+     * @param oneSquare
+     */
+    function avoidOverLap(oneSquare) {
+        if(window.checkOverlap > 10 ) {
+            return true;
+        }else{
+           ++window.checkOverlap;
+        }
+        $.each(window.squares, function (index, square) {
+            if(square.overlap(oneSquare)) {
+                oneSquare.init();
+                avoidOverLap(oneSquare);
+            }
+        });
     }
 
     /**
