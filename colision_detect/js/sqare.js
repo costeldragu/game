@@ -162,6 +162,8 @@
             var colision_found = false;
 
 
+
+
             if (!(this.rect.top > container.rect.bottom)) {
                 console.log('top bottom',this.id,container.id);
                 this.directions.y = 1;
