@@ -2,7 +2,7 @@
     "use strict";
     var square = {
         /**
-         * Rectangular coordonates
+         * Rectangular coordinates
          */
         rect: {
             top: 0,
@@ -20,9 +20,9 @@
          */
         directions: {
             x: 1,
-            y: 1
+            y: -1
         },
-        speed: 2,
+        speed: 1,
         doomBoard: {},
         doomElement: false,
         //Init the element
@@ -66,8 +66,8 @@
          */
         startUpPosition: function startUpPosition() {
             if(!this.doomBoard) return;
-            this.dimensions.width = 200;Math.floor((Math.random() * 50) + 10);
-            this.dimensions.height = 200; Math.floor((Math.random() * 50) + 10);
+            this.dimensions.width = Math.floor((Math.random() * 100) + 10);
+            this.dimensions.height = Math.floor((Math.random() * 100) + 10);
             this.rect.top = Math.floor((Math.random() * (this.doomBoard.height - this.dimensions.height)) + 5);
             this.rect.left = Math.floor((Math.random() * (this.doomBoard.width - this.dimensions.width)) + 5);
             this.rect.right = this.rect.left + this.dimensions.width;
@@ -154,65 +154,18 @@
          * @param container
          * @returns {square}
          */
-        changeDirection: function changeDirection(container) {
-            if (container === null) {
-                return this;
+        changeDirection: function changeDirection() {
+
+            if(this.directions.y == 1) {
+                this.directions.y = -1
+            }else{
+                this.directions.y = 1
             }
-
-            var colision_found = false;
-
-
-
-
-            if (!(this.rect.top > container.rect.bottom)) {
-                console.log('top bottom',this.id,container.id);
-                this.directions.y = 1;
-                container.directions.y = -1;
-
+            if(this.directions.x == 1) {
+                this.directions.x = -1
+            }else{
+                this.directions.x = 1
             }
-
-
-
-            if (!(this.rect.left > container.rect.right)) {
-                console.log('left to right');
-                this.directions.x = 1;
-                container.directions.x = -1;
-
-
-            }
-            console.log('move');
-            this.move();
-            container.move();
-            //if (!(this.rect.right < container.rect.left) && !colision_found) {
-            //    this.directions.x = -1;
-            //    container.directions.x = 1;
-            //    this.move();
-            //    container.move();
-            //    colision_found = true;
-            //}
-
-            //if (!(this.rect.top > container.rect.bottom)) {
-            //    this.directions.y = -1;
-            //}else if (!(container.rect.top > this.rect.bottom)) {
-            //    this.directions.y = 1;
-            //}
-            //
-            //if (!(this.rect.right > container.rect.left)) {
-            //    this.directions.x = 1;
-            //}else if (!(container.rect.right > this.rect.left)) {
-            //    this.directions.x = -1;
-            //}
-
-            //if (!(this.rect.right > container.rect.left)) {
-            //    this.directions.x = 1;
-            //}
-            //
-            //if (!(this.rect.bottom < container.rect.top)) {
-            //    this.directions.y = 1;
-            //}
-            //if (!(this.rect.left > container.rect.right)) {
-            //    this.directions.x = -1;
-            //}
             //this.move();
             return this;
         }
@@ -226,7 +179,7 @@
         var gameWidth = $('#game_board').outerWidth();
         var gameHeight = $('#game_board').outerHeight();
 
-        for (var x = 0; x <2; ++x) {
+        for (var x = 0; x <10; ++x) {
             var oneSquare = $.extend(true, {}, square);
             oneSquare.id = x;
             oneSquare.init({
@@ -256,7 +209,7 @@
         $.each(window.squares, function (index, square) {
             $.each(window.squares, function (other_index, other_square) {
                 if(other_square.id != square.id && square.overlap(other_square)){
-                    other_square.changeDirection(square);
+                    square.changeDirection();
 
                 }
             });
