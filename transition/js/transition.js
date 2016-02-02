@@ -36,7 +36,7 @@
         //
         //});
 
-        $('#reposition').on('click', setPosition)
+        $('#reposition').on('click', setPosition);
         setPosition();
 
 
