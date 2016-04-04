@@ -4,7 +4,7 @@
      width: 10px;
      height: 15px;
      background: red;
-    transition-timing-function: linear;
+     transition-timing-function: linear;
      transition: 4s top, left 4s;
     z-index: 5;
  }
