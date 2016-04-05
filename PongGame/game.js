@@ -3,17 +3,15 @@
  */
 
 // shim layer with setTimeout fallback
-window.requestAnimFrame = (function (callback, gameFPS) {
+window.requestAnimFrame = (function (callback) {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         function (callback) {
-            window.setTimeout(callback, 1000 / gameFPS);
+            window.setTimeout(callback, 1000 / 60);
         };
 })();
 
-//Number fo FPS
-var gameFPS = 60;
 //Our Canvas
 var canvas = document.getElementById("canvas");
 //2s Context
@@ -121,7 +119,24 @@ function game() {
     drawTopPad();
     drawBottomPad();
     drawBall();
-    requestAnimFrame(game, gameFPS);
+    fps();
+    requestAnimFrame(game);
+}
+
+/**
+ * Calculate frame rate per seconds
+ */
+var frameTime = 0, nextLoop = new Date().getTime() + 1000;
+
+function fps() {
+    var thisFrameTime = new Date().getTime();
+    if (thisFrameTime < nextLoop) {
+        ++frameTime
+    } else {
+        document.getElementById('frame_per_second').innerHTML = frameTime.toFixed(1);
+        nextLoop += 1000;
+        frameTime = 0
+    }
 }
 
 //Start the game

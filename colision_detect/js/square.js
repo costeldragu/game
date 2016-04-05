@@ -1,5 +1,8 @@
 (function ($, window, document) {
     "use strict";
+
+
+
     var square = {
         /**
          * Rectangular coordinates
@@ -10,7 +13,9 @@
             right: 0,
             bottom: 0
         },
+        //The id
         id:0,
+        //Dimensions
         dimensions: {
             width: 0,
             height: 0
@@ -106,7 +111,7 @@
 
         },
         /**
-         *
+         * Move the sqare
          * @returns {square}
          */
         move: function move() {
@@ -172,7 +177,16 @@
 
 
     };
-    //Init the 
+    // shim layer with setTimeout fallback
+    window.requestAnimFrame = (function (callback) {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            function (callback) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+    //Init the
     $(function () {
         //Init square array list
         window.squares = [];
@@ -197,7 +211,7 @@
         }
 
         gameLoop();
-        $('#move').on('mousedown',gameLoop);
+       // $('#move').on('mousedown',gameLoop);
     });
 
 
@@ -205,18 +219,15 @@
      * Game loop
      */
     function gameLoop() {
-
         $.each(window.squares, function (index, square) {
             $.each(window.squares, function (other_index, other_square) {
                 if(other_square.id != square.id && square.overlap(other_square)){
                     square.changeDirection();
-
                 }
             });
             square.move();
-
         });
-        fps();
+       fps();
        window.requestAnimationFrame(gameLoop)
     }
 
