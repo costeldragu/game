@@ -81,7 +81,7 @@ ball.randomPosition = function () {
     if (this.coordinates.top + this.dimensions.height >  this.container.offsetHeight) {
         this.coordinates.top =  this.container.offsetHeight - this.dimensions.height;
     }
-    ball.center = {
+    this.center = {
         x: this.coordinates.left + this.dimensions.radius,
         y: this.coordinates.top + this.dimensions.radius
     };
@@ -102,10 +102,10 @@ ball.setStyle = function () {
 ball.overlap = function (otherBall) {
     var x = otherBall.center.x - this.center.x;
     var y = otherBall.center.y - this.center.y;
-    var sumRad = otherBall.dimensions.radius - this.center.radius;
+    var sumRad = otherBall.dimensions.radius + this.dimensions.radius;
     var d = Math.sqrt((x * x) + (y * y));
 
-    console.log(otherBall.center.x,this.center.x);
+
     if (d < sumRad) {
         return true;
     } else {
@@ -159,7 +159,7 @@ function avoidOverLap(ball) {
     }
 
     window.balls.forEach(function (inserted_ball) {
-console.log(ball.id , inserted_ball.id);
+
         if(ball.id !=  inserted_ball.id) {
             if(inserted_ball.overlap(ball)) {
                 ball.randomPosition();
