@@ -55,8 +55,8 @@
             }
 
             this.startUpPosition();
-            this.dimensions.x =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
-            this.dimensions.y =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
+            this.directions.x =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
+            this.directions.y =  Math.floor((Math.random() * 2) + 1) > 1 ? -1:1;
 
             this.doomElement.css({
                 backgroundColor: 'rgb(' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ',' + Math.floor((Math.random() * 255) + 1) + ')'

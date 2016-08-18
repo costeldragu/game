@@ -1,0 +1,20 @@
+#board {
+    border: 2px;
+    border-radius: 10px;
+    background-color: aqua;
+    width: 800px;
+    height: 600px;
+    margin: auto;
+    position: relative;
+}
+
+.container {
+    width: 800px;
+    margin: auto;
+}
+
+.ball {
+    border: 1px solid;
+    position: absolute;
+
+}

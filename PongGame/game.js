@@ -113,12 +113,13 @@ function computerAI2() {
 
 //Render the game
 function game() {
-    computerAI1();
-    computerAI2();
+   
     createTable();
     drawTopPad();
     drawBottomPad();
     drawBall();
+	 computerAI1();
+    computerAI2();
     fps();
     requestAnimFrame(game);
 }

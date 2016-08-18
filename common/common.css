@@ -10,3 +10,11 @@
     border: 1px solid #000;
     position: absolute;
 }
+
+.round {
+    border: 1px solid #000;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+}
